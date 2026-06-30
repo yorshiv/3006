@@ -40,7 +40,13 @@
 <meta name="theme-color" content="#050508">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<!-- FIX: Google Fonts <link rel="stylesheet"> was render-blocking — browser
+     would not paint anything (including html{background}) until this external
+     stylesheet resolved. Switched to preload+swap pattern: font CSS loads
+     asynchronously and only applies once ready, so first paint (dark
+     background) happens immediately regardless of font CDN response time. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap"></noscript>
 
 <style>
 /* ── RESET ── */
@@ -67,7 +73,13 @@
   --r:16px;
   --rl:28px;
 }
-html{scroll-behavior:smooth;overflow-x:hidden}
+/* FIX: html previously had no background — browser painted its own default
+   background first, then flashed to the dark theme only once body{background}
+   was applied after the render-blocking GA4 script + 3 JSON-LD scripts +
+   Google Fonts stylesheet finished loading. Setting background directly on
+   html guarantees the correct dark color paints on the very first frame,
+   with zero flash regardless of script/font load timing. */
+html{scroll-behavior:smooth;overflow-x:hidden;background:#050508}
 /* FIX: added isolation:isolate so body establishes its own stacking context —
    prevents z-index:0 orbs from ever being promoted above z-index:2 sections
    in browsers that mis-resolve stacking on position:fixed elements. */
@@ -83,29 +95,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-b);overflow-x
    causing the soft blurred circle to render as a hard-edged solid color block
    over the hero. Removed contain entirely — filter:blur needs unclipped space
    around the element to render correctly. */
-.orb{
-    position:fixed;
-    border-radius:50%;
-    pointer-events:none;
-    z-index:-1;
-    opacity:.08;
-    filter:blur(40px);
-    transform:translateZ(0);
-}
-.o1{
-    width:300px;
-    height:300px;
-}
-
-.o2{
-    width:250px;
-    height:250px;
-}
-
-.o3{
-    width:220px;
-    height:220px;
-}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:-1;opacity:.15}
+.o1{width:500px;height:500px;background:var(--neon2);top:-60px;left:-100px}
+.o2{width:420px;height:420px;background:var(--neon);top:38%;right:-70px}
+.o3{width:340px;height:340px;background:var(--neon3);bottom:8%;left:28%}
 
 /* ── NOISE ── */
 body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.3}
