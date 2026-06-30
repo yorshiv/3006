@@ -83,10 +83,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-b);overflow-x
    causing the soft blurred circle to render as a hard-edged solid color block
    over the hero. Removed contain entirely — filter:blur needs unclipped space
    around the element to render correctly. */
-.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;opacity:.15}
-.o1{width:500px;height:500px;background:var(--neon2);top:-60px;left:-100px}
-.o2{width:420px;height:420px;background:var(--neon);top:38%;right:-70px}
-.o3{width:340px;height:340px;background:var(--neon3);bottom:8%;left:28%}
+.orb{
+    position:fixed;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:-1;
+    opacity:.08;
+    filter:blur(40px);
+    transform:translateZ(0);
+}
+.o1{
+    width:300px;
+    height:300px;
+}
+
+.o2{
+    width:250px;
+    height:250px;
+}
+
+.o3{
+    width:220px;
+    height:220px;
+}
 
 /* ── NOISE ── */
 body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.3}
